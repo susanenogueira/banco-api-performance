@@ -1,11 +1,17 @@
 import http from 'k6/http'
 import { sleep,check  } from 'k6'
+const postLogin = JSON.parse(open('../fixtures\postLogin.json'))
 
 
 export const options = {
-    vus:10, 
-  duration:'30s',
-    thresholds: {
+  stages: [
+    {duration:'5s',target:10 },
+    {duration:'20s',target:10 },
+    {duration:'10s',target:0 }
+  
+  ],
+   
+  thresholds: {
    // http_req_failed: ['rate<0.01'], // http errors should be less than 1%
     http_req_duration: ['p(90)<3000','max<5000'], // 95% of requests should be below 200ms
      http_req_failed:['rate<0.01']
@@ -16,10 +22,7 @@ export default function () {
     //teste
      const url = 'http://localhost:3000/login';
      
-     const payload = JSON.stringify({
-     username: 'julio.lima',
-     senha: '123456',
-  });
+     const payload = JSON.stringify(postLogin);
 
      const params = {
      headers: {
